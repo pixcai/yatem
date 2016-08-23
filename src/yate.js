@@ -1,8 +1,8 @@
-(function(global, emitter) {
+(function(global, yate) {
   if (typeof module === 'object' && module.exports) {
-    module.exports = emitter;
+    module.exports = yate;
   } else {
-    global.emitter = emitter;
+    global.yate = yate;
   }
 })(this, function(__events) {
   var hasOwnProperty = Object.hasOwnProperty.bind(__events);
