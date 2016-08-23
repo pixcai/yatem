@@ -1,0 +1,25 @@
+{
+  "name": "yate",
+  "version": "1.0.0",
+  "description": "Yet Another Tiny Emitter",
+  "main": "dist/yate.js",
+  "scripts": {
+    "test": "tape tests/test_yate.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixcai/yate.git"
+  },
+  "keywords": [
+    "Emitter"
+  ],
+  "author": "pixcai",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/pixcai/yate/issues"
+  },
+  "homepage": "https://github.com/pixcai/yate#readme",
+  "devDependencies": {
+    "tape": "^4.6.0"
+  }
+}
