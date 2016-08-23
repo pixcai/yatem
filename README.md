@@ -1,15 +1,15 @@
-# yate
+# yatem
 
 Yet Another Tiny Emitter
 
-[![Build Status](https://travis-ci.org/pixcai/yate.svg?branch=master)](https://travis-ci.org/pixcai/yate)
+[![Build Status](https://travis-ci.org/pixcai/yatem.svg?branch=master)](https://travis-ci.org/pixcai/yatem)
 
 ## Install
 
 Node and Browserify
 
 ```
-npm install yate --save
+npm install yatem --save
 ```
 
 ```html
@@ -21,23 +21,23 @@ npm install yate --save
 Node and Browserify
 
 ```js
-var yate = require('yate');
+var yatem = require('yatem');
 
-var someEvent = yate.on('some-event', function (arg1, arg2, arg3) {
+var someEvent = yatem.on('some-event', function (arg1, arg2, arg3) {
  // do something
 });
 
 yate.emit('some-event', 'arg1 value', 'arg2 value', 'arg3 value');
 // unsubscribe event
-yate.off('some-event');
-// or yate.off(someEvent);
+yatem.off('some-event');
+// or yatem.off(someEvent);
 ```
 
 Browser
 
 ```js
-yate.on('some-event', someCallback);
-yate.emit('some-event');
+yatem.on('some-event', someCallback);
+yatem.emit('some-event');
 ```
 
 ## Instance Methods
