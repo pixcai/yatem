@@ -1,7 +1,7 @@
 {
-  "name": "yate",
+  "name": "yatem",
   "version": "1.0.0",
-  "description": "Yet Another Tiny Emitter",
+  "description": "Yet Another Tiny Event Emitter",
   "main": "dist/yatem.js",
   "scripts": {
     "test": "tape tests/test_yatem.js"
@@ -11,6 +11,7 @@
     "url": "git+https://github.com/pixcai/yatem.git"
   },
   "keywords": [
+		"Event",
     "Emitter"
   ],
   "author": "pixcai",
