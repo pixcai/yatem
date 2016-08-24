@@ -48,7 +48,7 @@ test('test', function (t) {
 
 	t.equal(yatem.off(onc0), false);
 	yatem.emit('testOn');
-	t.equal(yatem.off('testOn'), true);
+	t.equal(yatem.off('testOn'), false);
 
 	t.equal(typeof yatem.off(once0), 'function');
 	t.comment('emit `testOnce`');

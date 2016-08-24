@@ -1,10 +1,12 @@
-(function(yate) {
-  if (typeof module === "object" && module.exports) {
-    module.exports = yate;
+(function(root, yatem) {
+  if (typeof define === 'function' && define.amd) {
+    define(['yatem'], yatem);
+  } else if (typeof exports === 'object') {
+    module.exports = yatem;
   } else {
-    this.yate = yate;
+    root.yatem = yatem;
   }
-})(function(__events) {
+})(this, function(__events) {
   var hasOwnProperty = Object.hasOwnProperty.bind(__events);
 
   function on(event, callback, context) {
@@ -25,21 +27,33 @@
   }
 
   function off(event) {
-    if (typeof event === "string") {
+    if (typeof event === 'string') {
       if (hasOwnProperty(event)) {
-        return delete __events[event];
+        delete __events[event];
+        return true;
       }
     }
-    if (event && typeof event === "object" && hasOwnProperty(event.name)) {
-      var handler = __events[event.name].handlers[event.handler];
-      __events[event.name].handlers[event.handler] = null;
-      return handler;
+    if (event && typeof event === 'object' && event.name && hasOwnProperty(event.name)) {
+      var handlers = __events[event.name].handlers;
+      var handler = handlers[event.handler];
+
+      if (typeof handler === 'function') {
+        handlers[event.handler] = null;
+        var validHandlers = handlers.filter(function(handler) {
+          return handler !== null;
+        });
+        if (!validHandlers.length) {
+          this.off(event.name);
+        }
+        return handler;
+      }
     }
-    if (typeof event !== "boolean" && !event) {
+    if (typeof event !== 'boolean' && !event) {
       var self = this;
-      return Object.keys(__events).reduce(function(result, event) {
-        return self.off(event);
-      }, false);
+      Object.keys(__events).forEach(function(event) {
+        self.off(event);
+      });
+      return true;
     }
     return false;
   }
@@ -70,19 +84,24 @@
       });
       return;
     }
-    if (typeof args[0] === "string") {
-      if (hasOwnProperty(args[0])) {
-        var handlers = __events[args[0]].handlers;
+    var event = args[0];
+    if (typeof event === 'string') {
+      if (hasOwnProperty(event)) {
+        var handlers = __events[event].handlers;
         for (var i = 0, length = handlers.length; i < length; i++) {
           handlers[i] && handlers[i].apply(null, args.slice(1));
         }
-        if (__events[args[0]].onlyOnce) this.off(args[0]);
+        if (__events[event].onlyOnce) {
+          this.off(event);
+        }
       }
     }
-    if (typeof args[0] === "object") {
-      var handler = __events[args[0].name].handlers[args[0].handler];
+    if (typeof event === 'object' && event.name && hasOwnProperty(event.name)) {
+      var handler = __events[event.name].handlers[event.handler];
       handler && handler.apply(null, args.slice(1));
-      if (__events[args[0].name].onlyOnce) this.off(args[0]);
+      if (__events[event.name].onlyOnce) {
+        this.off(event);
+      }
     }
   }
   return {
