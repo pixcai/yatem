@@ -16,7 +16,7 @@ npm install yatem --save
 
 Browser
 ```html
-<script src="node_modules/dist/yate.min.js"></script>
+<script src="node_modules/dist/yatem.min.js"></script>
 ``` 
 
 ## Usage
@@ -78,8 +78,8 @@ Subscribe to an event
 If subscribe successful, return an object, that can use for yatem.off() and yatem.emit(). Otherwise return false.
 
 ```js
-var e1 = yatem.once('my-event', callback); // typeof e1 === 'object'
-var e2 = yatem.on('my-event', callback);	 // e2 === false
+var e1 = yatem.once('my-event', callback);	// typeof e1 === 'object'
+var e2 = yatem.on('my-event', callback);	// e2 === false
 
 yatem.emit(e1); // Ok
 yatem.emit(e2); // Do nothing
@@ -107,7 +107,7 @@ If event is null or undefined, and not boolean type, it will unsubscribe all eve
 var e1 = yatem.on('my-event', callback1);
 var e2 = yatem.on('my-event', callback2);
 
-yatem.off(); // Unsubscribe all event, or use yatem.off(null)
+yatem.off(); // Unsubscribe all events, or use yatem.off(null)
 // Notice: yatem.off(false) WILL NOT unsubscribe all events, it will do nothing
 
 yatem.emit(e1); // Do nothing
@@ -127,7 +127,7 @@ If event is null or undefined, and not boolean type, it will emit all events.
 var e1 = yatem.on('my-event', callback1);
 var e2 = yatem.on('my-event', callback2);
 
-yatem.emit(); // Unsubscribe all event, or use yatem.emit(null[, arguments...])
+yatem.emit(); // Emit all events, or use yatem.emit(null[, arguments...])
 // Notice: yatem.emit(false) WILL NOT emit any events, it will do nothing
 ```
 
