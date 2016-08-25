@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+  <title>test yatem</title>
+  <style>
+  body {
+    margin: 0;
+  }
+  
+  h1 {
+    text-align: center;
+  }
+  
+  #output {
+    padding: 1em;
+  }
+  
+  p,
+  h3 {
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  #output p {
+    margin-left: 1em;
+  }
+  </style>
+</head>
+
+<body>
+  <h1>test yatem</h1>
+  <div id="output"></div>
+  <script>
+  var output = document.getElementById('output');
+
+  function echo(pass, no, msg, operator, expected, actual) {
+    var p = document.createElement('p');
+
+    function toString(value) {
+      if (value && typeof value === 'object') {
+        return JSON.stringify(value);
+      }
+      return value;
+    }
+
+    if (pass) {
+      p.style.color = 'green';
+      p.innerHTML = 'ok ' + no + ' ' + msg;
+    } else {
+      p.style.color = 'red';
+      p.innerHTML = 'not ok ' + no + ' ' + msg + '<br>';
+      p.innerHTML += '--';
+      p.innerHTML += '<br>operator: ' + operator;
+      p.innerHTML += '<br>excepted: ' + toString(expected);
+      p.innerHTML += '<br>actual:   ' + toString(actual);
+      p.innerHTML += '<br>--';
+    }
+    output.appendChild(p);
+    return !!pass;
+  }
+
+  function test(name, cb) {
+    var t = {
+      equal: function(actual, expected) {
+        var msg = 'should be equal';
+
+        if (actual === expected) {
+          this.__success++;
+          return echo(true, this.__success + this.__fail, msg);
+        } else {
+          this.__fail++;
+          return echo(false, this.__success + this.__fail, msg, 'equal', expected, actual);
+        }
+      },
+      deepEqual: function(actual, expected) {
+        var msg = 'should be equivalent';
+
+        if ((typeof actual !== 'object') || (typeof expected !== 'object')) {
+          if (actual === expected) {
+            return true;
+          }
+          return false;
+        }
+        for (var key in expected) {
+          if (expected.hasOwnProperty(key) && actual.hasOwnProperty(key)) {
+            if (!this.deepEqual(actual[key], expected[key])) {
+              this.__fail++;
+              return echo(false, this.__success + this.__fail, msg, 'deepEqual', expected, actual);
+            }
+          } else {
+            this.__fail++;
+            return echo(false, this.__success + this.__fail, msg, 'deepEqual', expected, actual);
+          }
+        }
+        this.__success++;
+        return echo(true, this.__success + this.__fail, msg);
+      },
+      comment: function(msg, bgcolor) {
+        var h3 = document.createElement('h3');
+
+        h3.innerHTML = '# ' + (msg || '(anonymous)');
+        h3.style.color = 'white';
+        h3.style.backgroundColor = bgcolor || 'grey';
+        output.appendChild(h3);
+      },
+      end: function() {
+        var self = this;
+
+        setTimeout(function() {
+          var total = self.__success + self.__fail;
+
+          output.appendChild(document.createElement('br'));
+          self.comment('tests ' + total);
+          self.comment('pass  ' + self.__success, 'green');
+          self.comment('fail  ' + self.__fail, 'red');
+          output.appendChild(document.createElement('br'));
+          self.comment(total === self.__success ? 'ok' : 'failed', total === self.__success ? 'green' : 'red');
+        });
+      },
+      __fail: 0,
+      __success: 0
+    };
+
+    console.log = function(msg) {
+      var p = document.createElement('p');
+
+      p.innerHTML = '<span style="color:blue">&gt;&gt;&nbsp;</span>' + msg;
+      output.appendChild(p);
+    };
+
+    t.comment(name);
+    (typeof cb === 'function') && cb(t);
+  }
+  </script>
+  <script src="../lib/yatem.min.js"></script>
+  <script>
+  var onCallback0 = function() {
+    console.log('on 0 emitted!');
+  };
+
+  var onCallback1 = function() {
+    setTimeout(function() {
+      console.log('on 1 emitted!');
+    });
+  };
+
+  var onceCallback0 = function() {
+    console.log('once 0 emitted!');
+  };
+
+  var onceCallback1 = function() {
+    setTimeout(function() {
+      console.log('once 1 emitted!');
+    });
+  };
+
+  test('test', function(t) {
+    var on0 = yatem.on('testOn', onCallback0);
+    var on1 = yatem.on('testOn', onCallback1);
+    var onc0 = yatem.once('testOn', onCallback0)
+    var once0 = yatem.once('testOnce', onceCallback0);
+    var once1 = yatem.once('testOnce', onceCallback1);
+    var onc1 = yatem.on('testOnce', onceCallback0)
+
+    t.deepEqual(on0, {
+      name: 'testOn',
+      handler: 0
+    });
+    t.deepEqual(on1, {
+      name: 'testOn',
+      handler: 1
+    });
+    t.equal(onc0, false);
+    t.deepEqual(once0, {
+      name: 'testOnce',
+      handler: 0
+    });
+    t.deepEqual(once1, {
+      name: 'testOnce',
+      handler: 1
+    });
+    t.equal(onc1, false);
+
+    t.comment('emit `testOn`');
+    yatem.emit('testOn');
+    t.comment('emit `testOn` again');
+    yatem.emit('testOn');
+
+    t.equal(typeof yatem.off(on0), 'function');
+    t.comment('emit `testOn` after off on0');
+    yatem.emit('testOn');
+    t.equal(typeof yatem.off(on1), 'function');
+
+    t.equal(yatem.off(onc0), false);
+    yatem.emit('testOn');
+    t.equal(yatem.off('testOn'), false);
+
+    t.equal(typeof yatem.off(once0), 'function');
+    t.comment('emit `testOnce`');
+    yatem.emit('testOnce');
+    t.equal(yatem.off(once1), false);
+    t.comment('emit `testOnce` again');
+    yatem.emit('testOnce');
+    t.equal(yatem.off('testOnce'), false);
+
+    t.end();
+  });
+  </script>
+</body>
+
+</html>

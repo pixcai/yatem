@@ -16,7 +16,7 @@ npm install yatem --save
 
 Browser
 ```html
-<script src="node_modules/dist/yatem.min.js"></script>
+<script src="node_modules/yatem/lib/yatem.min.js"></script>
 ``` 
 
 ## Usage

@@ -1,8 +1,8 @@
 {
   "name": "yatem",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Yet Another Tiny Event Emitter",
-  "main": "dist/yatem.js",
+  "main": "lib/yatem.js",
   "scripts": {
     "test": "tape tests/test_yatem.js"
   },
